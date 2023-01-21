@@ -51,7 +51,7 @@ SELECT COUNT(Id)
   FROM PlaylistItem;
 
 -- 8. Calculate number of items inside of all playlists of user with name “Test Test”
-   USE educ
+   USE educ;
 SELECT COUNT(PlaylistId) 
   FROM PlaylistItem
        JOIN Playlist
@@ -64,7 +64,7 @@ SELECT COUNT(PlaylistId)
                                  AND LastName = 'Test');
 
 -- 9. Calculate count of videos for every channel
-   USE educ
+   USE educ;
 SELECT Channel.Title, COUNT(ChannelId)
   FROM Channel
        FULL JOIN Video
@@ -72,7 +72,7 @@ SELECT Channel.Title, COUNT(ChannelId)
  GROUP BY Channel.Title;
 
 -- 10. Calculate count of videos for every not deleted user and show users’ full name
-   USE educ
+   USE educ;
 SELECT CONCAT(FirstName, ' ', LastName), COUNT(Video.Title)
   FROM Video
        JOIN Channel
@@ -83,7 +83,7 @@ SELECT CONCAT(FirstName, ' ', LastName), COUNT(Video.Title)
  ORDER BY 2 DESC, 1 DESC;
 
 -- 11. Calculate count of likes for every video in the system
-   USE educ
+   USE educ;
 SELECT Video.Title, COUNT(RTNG.Rating)
   FROM Video
        LEFT JOIN (SELECT Rating.Rating, Rating.VideoId 
@@ -93,32 +93,32 @@ SELECT Video.Title, COUNT(RTNG.Rating)
  GROUP BY Video.Title;
 
 -- 12. Calculate count of dislikes for every video in the system
-   USE educ
+   USE educ;
 SELECT Video.Title, COUNT(RTNG.Rating)
   FROM Video
        LEFT JOIN (SELECT Rating.Rating, Rating.VideoId 
                     FROM Rating 
                    WHERE RATING = 2) RTNG
        ON Video.Id = RTNG.VideoId
-GROUP BY Video.Title;
+ GROUP BY Video.Title;
 
 
 -- 13 Show users who have exactly one channel (no more, no less)
-   USE educ
+   USE educ;
 SELECT CONCAT(FirstName, ' ', LastName) as 'Full Name'
   FROM "User"
  WHERE "User".Id IN (SELECT UserId
-					  FROM Channel
-					 GROUP BY UserId
-					HAVING COUNT(UserId) = 1);
+		       FROM Channel
+		      GROUP BY UserId
+		     HAVING COUNT(UserId) = 1);
 
 -- 14. Calculate length of every comment in the system
-   USE educ
+   USE educ;
 SELECT Text, LEN(Text) as SymbolsCount
   FROM Comment;
 
 -- 15. Show only those comments which length is shorter than 35 symbols, show users and videos which they belong to and order them from longer to shorter.
-   USE educ
+   USE educ;
 SELECT Text, CONCAT(FirstName, ' ', LastName) as 'Full Name', Video.Title, LEN(Text) as SymbolsCount
   FROM Comment
        JOIN "User"
@@ -129,45 +129,43 @@ SELECT Text, CONCAT(FirstName, ' ', LastName) as 'Full Name', Video.Title, LEN(T
  ORDER BY 4 DESC;
 
 -- 16. For every row from Task #15 show how many likes every video has (query from Task #11)
-USE educ
+USE educ;
 SELECT Text, CONCAT(FirstName, ' ', LastName) as 'Full Name', Video.Title, tLIKE.Likes, LEN(Text) as SymbolsCount
   FROM Comment
        JOIN "User"
        ON Comment.UserId = "User".Id
        JOIN Video
        ON Video.Id = Comment.VideoId
-
        JOIN (SELECT Video.Title, COUNT(RTNG.Rating) as Likes
-		       FROM Video
-			        LEFT JOIN (SELECT Rating.Rating, Rating.VideoId 
+	       FROM Video
+		    LEFT JOIN (SELECT Rating.Rating, Rating.VideoId 
                                  FROM Rating 
                                 WHERE RATING != 2) RTNG
-			        ON Video.Id = RTNG.VideoId
-	          GROUP BY Video.Title) tLIKE
+		    ON Video.Id = RTNG.VideoId
+	      GROUP BY Video.Title) tLIKE
        ON Video.Title = tLIKE.Title
-
  WHERE LEN(Text) <= 35
  ORDER BY 5 DESC;
 
 -- 17. For query from Task #13, add the name of the channel to the results
-   USE educ
+   USE educ;
 SELECT CONCAT(FirstName, ' ', LastName) as 'Full Name', Channel.Title
   FROM "User"
        JOIN Channel
        ON "User".id = Channel.UserId
  WHERE "User".Id IN (SELECT UserId
-					   FROM Channel
-					  GROUP BY UserId
-					 HAVING COUNT(UserId) = 1);
+		       FROM Channel
+		      GROUP BY UserId
+		     HAVING COUNT(UserId) = 1);
 
 -- 18. Show User Names, Video Titles and Channel Titles in the same query like on the screenshot. Also order the items by their ids
-USE educ
+USE educ;
 SELECT "User".Id, CONCAT(FirstName, ' ', LastName) as Name, 'User' as Type
   FROM "User"
-UNION
+ UNION
 SELECT Channel.Id, Channel.Title as Name, 'Channel' as Type
   FROM Channel
-UNION
+ UNION
 SELECT Video.Id, Video.Title as Name, 'Video' as Type 
   FROM Video
-ORDER BY Id ASC;
+ ORDER BY Id ASC;
