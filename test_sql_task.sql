@@ -58,16 +58,13 @@ SELECT COUNT(PlaylistId)
        ON PlaylistItem.PlaylistId = Playlist.Id
        JOIN "User"
        ON Playlist.UserId = "User".Id
- WHERE Playlist.UserId = (SELECT "User".Id 
-                            FROM "User"
-                           WHERE FirstName = 'Test' 
-                                 AND LastName = 'Test');
+ WHERE FirstName = 'Test' AND LastName = 'Test';
 
 -- 9. Calculate count of videos for every channel
    USE educ;
 SELECT Channel.Title, COUNT(ChannelId)
   FROM Channel
-       FULL JOIN Video
+       JOIN Video
        ON Channel.Id = Video.ChannelId
  GROUP BY Channel.Title;
 
@@ -79,7 +76,7 @@ SELECT CONCAT(FirstName, ' ', LastName), COUNT(Video.Title)
        ON Channel.id = Video.ChannelId
        JOIN "User"
        ON Channel.UserId = "User".Id
- GROUP BY CONCAT(FirstName, ' ', LastName)
+ GROUP BY "User".Id, CONCAT(FirstName, ' ', LastName)
  ORDER BY 2 DESC, 1 DESC;
 
 -- 11. Calculate count of likes for every video in the system
@@ -101,7 +98,6 @@ SELECT Video.Title, COUNT(RTNG.Rating)
                    WHERE RATING = 2) RTNG
        ON Video.Id = RTNG.VideoId
  GROUP BY Video.Title;
-
 
 -- 13 Show users who have exactly one channel (no more, no less)
    USE educ;
